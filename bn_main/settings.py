@@ -25,6 +25,7 @@ SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(int(config('DEBUG', 0)))
+DB = bool(int(config('DB', 0)))
 
 # use local db, storage, email config create be me
 
@@ -33,8 +34,6 @@ ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 HOSTS = config('ALLOWED_HOST')
 if HOSTS:
     ALLOWED_HOSTS.extend(HOSTS.split())
-
-
 
 
 # Application definition
@@ -85,13 +84,26 @@ WSGI_APPLICATION = 'bn_main.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
 
+if DB:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': config('DATABASES_DEFAULT_ENGINE'),
+            'NAME': config('DATABASES_DEFAULT_NAME'),
+            'HOST': config('DATABASES_DEFAULT_HOST'),
+            'PORT': int(config('DATABASES_DEFAULT_PORT')),
+            'USER': config('DATABASES_DEFAULT_USER'),
+            'PASSWORD': config('DATABASES_DEFAULT_PASSWORD'),
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
